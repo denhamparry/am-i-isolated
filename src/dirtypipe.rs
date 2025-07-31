@@ -1,6 +1,6 @@
 use anyhow::Result;
 
-use crate::{util::kernel_release_info, Test, TestCategory, TestResult};
+use crate::{Test, TestCategory, TestResult, util::kernel_release_info};
 
 pub struct DirtyPipeTest {}
 

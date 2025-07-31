@@ -14,8 +14,8 @@
 use anyhow::Result;
 
 use crate::{
-    util::{is_running_gvisor, read_file_as_space_separated_lines},
     Test, TestCategory, TestResult,
+    util::{is_running_gvisor, read_file_as_space_separated_lines},
 };
 
 const KNOWN_VIRT_RUNTIMES: &[&'static str] = &["edera"];

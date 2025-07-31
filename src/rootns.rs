@@ -52,7 +52,10 @@ impl Test for RootNSTest {
 
 impl TestResult for RootNSResult {
     fn success(&self) -> bool {
-        self.pid_nsid > 0xf0000001 && self.net_nsid > 0xf0000001 && self.ipc_nsid > 0xf0000001 && self.user_nsid > 0xf0000001
+        self.pid_nsid > 0xf0000001
+            && self.net_nsid > 0xf0000001
+            && self.ipc_nsid > 0xf0000001
+            && self.user_nsid > 0xf0000001
     }
 
     fn explain(&self) -> String {

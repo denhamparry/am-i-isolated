@@ -1,6 +1,6 @@
 pub mod cap;
 pub mod containerd;
-pub mod device_access;
+pub mod deviceaccess;
 pub mod dirtypipe;
 pub mod docker;
 pub mod mmap;
@@ -21,7 +21,7 @@ use std::process;
 
 use self::cap::CapTest;
 use self::containerd::ContainerDTest;
-use self::device_access::DeviceAccessTest;
+use self::deviceaccess::DeviceAccessTest;
 use self::dirtypipe::DirtyPipeTest;
 use self::docker::DockerTest;
 use self::mmap::MmapRWXTest;
