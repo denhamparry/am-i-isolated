@@ -1,34 +1,35 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: am-i-isolated
+  name: am-i-isolated-dev
 spec:
   template:
     metadata:
-      name: am-i-isolated
+      name: am-i-isolated-dev
     spec:
       restartPolicy: Never
       containers:
-      - name: am-i-isolated
-        image: ghcr.io/edera-dev/am-i-isolated:nightly
+      - name: am-i-isolated-dev
+        image: denhamparry/am-i-isolated:v0.0.1
+        imagePullPolicy: Always
   backoffLimit: 0
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: am-i-isolated-privileged
+  name: am-i-isolated-dev-privileged
 spec:
   template:
     metadata:
-      name: am-i-isolated-privileged
+      name: am-i-isolated-dev-privileged
     spec:
       hostPID: true
       hostIPC: true
       hostNetwork: true
       restartPolicy: Never
       containers:
-      - name: am-i-isolated-privileged
-        image: ghcr.io/edera-dev/am-i-isolated:nightly
+      - name: am-i-isolated-dev-privileged
+        image: denhamparry/am-i-isolated:v0.0.1
         imagePullPolicy: Always
         securityContext:
           privileged: true

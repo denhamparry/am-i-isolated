@@ -1,5 +1,6 @@
 pub mod cap;
 pub mod containerd;
+pub mod device_access;
 pub mod dirtypipe;
 pub mod docker;
 pub mod mmap;
@@ -20,6 +21,7 @@ use std::process;
 
 use self::cap::CapTest;
 use self::containerd::ContainerDTest;
+use self::device_access::DeviceAccessTest;
 use self::dirtypipe::DirtyPipeTest;
 use self::docker::DockerTest;
 use self::mmap::MmapRWXTest;
@@ -113,6 +115,7 @@ fn main() {
         Box::new(OCITest {}),
         Box::new(DockerTest {}),
         Box::new(ContainerDTest {}),
+        Box::new(DeviceAccessTest {}),
         Box::new(DirtyPipeTest {}),
         Box::new(MmapRWXTest {}),
         Box::new(ProcMaskTest {}),
