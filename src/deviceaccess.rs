@@ -1,6 +1,6 @@
-use std::path::Path;
 use std::fs;
 use std::os::unix::fs::FileTypeExt;
+use std::path::Path;
 
 use anyhow::Result;
 
@@ -26,11 +26,7 @@ impl Test for DeviceAccessTest {
         let mut result = DeviceAccessResult::default();
 
         // Check for dangerous memory devices
-        let dangerous_paths = [
-            "/dev/mem",
-            "/dev/kmem", 
-            "/dev/port"
-        ];
+        let dangerous_paths = ["/dev/mem", "/dev/kmem", "/dev/port"];
 
         for device_path in &dangerous_paths {
             if Path::new(device_path).exists() {
@@ -48,40 +44,52 @@ impl Test for DeviceAccessTest {
             for entry in entries.flatten() {
                 let path = entry.path();
                 let filename = path.file_name().unwrap_or_default().to_string_lossy();
-                
+
                 if let Ok(metadata) = entry.metadata() {
                     // Check for block devices
                     if metadata.file_type().is_block_device() {
-                        if filename.starts_with("sd") || 
-                           filename.starts_with("nvme") || 
-                           filename.starts_with("vd") ||
-                           filename.starts_with("hd") ||
-                           filename.starts_with("xvd") {
-                            result.block_devices.push(path.to_string_lossy().to_string());
+                        if filename.starts_with("sd")
+                            || filename.starts_with("nvme")
+                            || filename.starts_with("vd")
+                            || filename.starts_with("hd")
+                            || filename.starts_with("xvd")
+                        {
+                            result
+                                .block_devices
+                                .push(path.to_string_lossy().to_string());
                         }
                     }
-                    
+
                     // Check for character devices that could be problematic
                     if metadata.file_type().is_char_device() {
                         // Hardware random number generators
-                        if filename.starts_with("hwrng") || filename == "random" || filename == "urandom" {
-                            result.hardware_rngs.push(path.to_string_lossy().to_string());
+                        if filename.starts_with("hwrng")
+                            || filename == "random"
+                            || filename == "urandom"
+                        {
+                            result
+                                .hardware_rngs
+                                .push(path.to_string_lossy().to_string());
                         }
-                        
+
                         // GPU devices
-                        if filename.starts_with("nvidia") || 
-                           filename.starts_with("dri/") ||
-                           path.to_string_lossy().contains("/dri/") {
+                        if filename.starts_with("nvidia")
+                            || filename.starts_with("dri/")
+                            || path.to_string_lossy().contains("/dri/")
+                        {
                             result.gpu_devices.push(path.to_string_lossy().to_string());
                         }
-                        
+
                         // Other potentially dangerous character devices
                         if filename.starts_with("tty") ||
                            filename.starts_with("pts/") ||
                            filename == "console" ||
                            filename.starts_with("fb") ||  // framebuffer devices
-                           filename.starts_with("input/") {
-                            result.character_devices.push(path.to_string_lossy().to_string());
+                           filename.starts_with("input/")
+                        {
+                            result
+                                .character_devices
+                                .push(path.to_string_lossy().to_string());
                         }
                     }
                 }
@@ -106,42 +114,62 @@ impl Test for DeviceAccessTest {
 
 impl TestResult for DeviceAccessResult {
     fn success(&self) -> bool {
-        self.dangerous_devices.is_empty() && 
-        self.block_devices.is_empty() &&
-        self.gpu_devices.is_empty() &&
-        // Hardware RNGs and some character devices might be acceptable
-        self.character_devices.len() <= 3  // Allow minimal character device access
+        self.dangerous_devices.is_empty()
+            && self.block_devices.is_empty()
+            && self.gpu_devices.is_empty()
+            && self.character_devices.len() <= 3 // Allow minimal character device access
     }
 
     fn explain(&self) -> String {
         let mut issues = Vec::new();
-        
+
         if !self.dangerous_devices.is_empty() {
-            issues.push(format!("access to dangerous memory devices: {}", 
-                self.dangerous_devices.join(", ")));
+            issues.push(format!(
+                "access to dangerous memory devices: {}",
+                self.dangerous_devices.join(", ")
+            ));
         }
-        
+
         if !self.block_devices.is_empty() {
-            issues.push(format!("access to {} block devices: {}", 
+            issues.push(format!(
+                "access to {} block devices: {}",
                 self.block_devices.len(),
-                self.block_devices.iter().take(3).cloned().collect::<Vec<_>>().join(", ")));
+                self.block_devices
+                    .iter()
+                    .take(3)
+                    .cloned()
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ));
         }
-        
+
         if !self.gpu_devices.is_empty() {
-            issues.push(format!("access to GPU/graphics devices: {}", 
-                self.gpu_devices.join(", ")));
+            issues.push(format!(
+                "access to GPU/graphics devices: {}",
+                self.gpu_devices.join(", ")
+            ));
         }
-        
+
         if self.character_devices.len() > 3 {
-            issues.push(format!("access to {} character devices including: {}", 
+            issues.push(format!(
+                "access to {} character devices including: {}",
                 self.character_devices.len(),
-                self.character_devices.iter().take(3).cloned().collect::<Vec<_>>().join(", ")));
+                self.character_devices
+                    .iter()
+                    .take(3)
+                    .cloned()
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ));
         }
 
         if issues.is_empty() {
             "container has minimal device access - good isolation".to_string()
         } else {
-            format!("container has dangerous device access: {}", issues.join("; "))
+            format!(
+                "container has dangerous device access: {}",
+                issues.join("; ")
+            )
         }
     }
 
