@@ -3,6 +3,7 @@ pub mod containerd;
 pub mod deviceaccess;
 pub mod dirtypipe;
 pub mod docker;
+pub mod hostmounts;
 pub mod mmap;
 pub mod oci;
 pub mod procmask;
@@ -24,6 +25,7 @@ use self::containerd::ContainerDTest;
 use self::deviceaccess::DeviceAccessTest;
 use self::dirtypipe::DirtyPipeTest;
 use self::docker::DockerTest;
+use self::hostmounts::HostMountsTest;
 use self::mmap::MmapRWXTest;
 use self::oci::OCITest;
 use self::procmask::ProcMaskTest;
@@ -116,6 +118,7 @@ fn main() {
         Box::new(DockerTest {}),
         Box::new(ContainerDTest {}),
         Box::new(DeviceAccessTest {}),
+        Box::new(HostMountsTest {}),
         Box::new(DirtyPipeTest {}),
         Box::new(MmapRWXTest {}),
         Box::new(ProcMaskTest {}),
